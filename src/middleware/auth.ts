@@ -3,11 +3,17 @@ import * as jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { RoleEnum, RoleType } from '../common';
 
-
+const apiKey = process.env.api_key;
+console.log(apiKey,"=============")
 // Middleware to protect routes and check roles
 const protectRoute = (roles: RoleType[] = [RoleEnum[2]]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
+
+    const keyApi = req.headers["api-key"] as string;
+    if(keyApi != apiKey){
+      return res.status(404).json({mesaga: "api key not request"})
+    }
 
     // Check if Authorization header exists and starts with "Bearer"
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
